@@ -33,6 +33,7 @@ npx skills add wtyanan/tstack --list
 | `create-verification-skill` | Generates a project-local Claude skill that drives the app like a user and proves behavior. |
 | `full-send` | Takes a change to a merged PR with nobody watching. |
 | `full-stop` | Same as `full-send`, but stops when the PR is ready for me to merge. |
+| `maintain-verification-skill` | Audits a project's verification skill against source and the live app, then ships proven fixes. |
 | `sol-loop` | Reviews a change with GPT Sol in a loop until both sides agree. |
 | `tstack-update` | Syncs the vendored skills from their upstream sources. |
 | `unslop` | Cuts AI tells from any writing. |
@@ -42,8 +43,8 @@ npx skills add wtyanan/tstack --list
 This repo is a personal fork, not a mirror. Changes are tracked under **Local
 adaptations** in [`SOURCES.md`](SOURCES.md). The main ones:
 
-- `create-verification-skill` targets Claude Code's `.claude/skills/` layout
-  instead of Cursor's.
+- `create-verification-skill` and `maintain-verification-skill` target Claude
+  Code's `.claude/skills/` layout instead of Cursor's.
 - `unslop` is provider-neutral and uses standard skill frontmatter.
 - `tstack-update` is maintained here rather than vendored.
 
@@ -56,9 +57,11 @@ Some skills call other skills by name:
 - `file-pr`, `babysit-pr`, and `modernize` use `leaving-pr-comments`.
 - `create-verification-skill` points at `maintain-verification-skill` for its
   optional maintenance loop.
+- `maintain-verification-skill` points at `create-verification-skill` when a
+  project has no verification skill yet.
 
-Not vendored here yet: `file-pr`, `leaving-pr-comments`,
-`maintain-verification-skill`, `modernize`, and `takeover`. Install those from
+Not vendored here yet: `file-pr`, `leaving-pr-comments`, `modernize`, and
+`takeover`. Install those from
 their upstream repositories if a workflow needs them.
 
 `babysit-pr` also ships a `pr-wait` helper that needs `python3`, and the

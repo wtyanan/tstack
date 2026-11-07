@@ -15,6 +15,7 @@ repo. Sources we have not taken anything from do not belong in this file.
 | `create-verification-skill` | [cursor/plugins](https://github.com/cursor/plugins) | `pstack/skills/create-verification-skill` | MIT |
 | `full-send` | [t3dotgg/tstack](https://github.com/t3dotgg/tstack) | `skills/full-send` | MIT |
 | `full-stop` | [t3dotgg/tstack](https://github.com/t3dotgg/tstack) | `skills/full-stop` | MIT |
+| `maintain-verification-skill` | [cursor/plugins](https://github.com/cursor/plugins) | `pstack/skills/maintain-verification-skill` | MIT |
 | `sol-loop` | [t3dotgg/tstack](https://github.com/t3dotgg/tstack) | `skills/sol-loop` | MIT |
 | `unslop` | [cursor/plugins](https://github.com/cursor/plugins) | `pstack/skills/unslop` | MIT |
 
@@ -48,6 +49,10 @@ Keep these when syncing from upstream:
   skills live at `.claude/skills/verify-<app>/`, and its maintenance-loop
   section names the `maintain-verification-skill` skill instead of a slash
   command.
+- `maintain-verification-skill` is adapted for Claude Code: it looks for
+  targets under `.claude/skills/verify-*/`, names the
+  `create-verification-skill` skill instead of a slash command, and launches
+  its source-wave readers as parallel `Agent` calls (`Explore` type).
 - `unslop` is provider-neutral: its frontmatter contains only `name` and
   `description`, with no agent-specific fields.
 
@@ -60,11 +65,13 @@ Some skills reference others by name:
 - `file-pr`, `babysit-pr`, and `modernize` use `leaving-pr-comments`.
 - `create-verification-skill` points at `maintain-verification-skill` for the
   optional maintenance loop.
+- `maintain-verification-skill` points at `create-verification-skill` when no
+  verification skill exists yet.
 
 Currently vendored: `babysit-pr`, `council`, `create-verification-skill`,
-`full-send`, `full-stop`, `sol-loop`, `tstack-update`, `unslop`.
-Not yet vendored: `file-pr`, `leaving-pr-comments`,
-`maintain-verification-skill`, `modernize`, `takeover`.
+`full-send`, `full-stop`, `maintain-verification-skill`, `sol-loop`,
+`tstack-update`, `unslop`.
+Not yet vendored: `file-pr`, `leaving-pr-comments`, `modernize`, `takeover`.
 
 ## Adding a source
 
