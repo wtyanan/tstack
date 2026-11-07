@@ -68,7 +68,8 @@ rm -rf /tmp/cursor-plugins-upstream
 git clone --quiet --filter=blob:none --sparse \
   https://github.com/cursor/plugins.git /tmp/cursor-plugins-upstream
 git -C /tmp/cursor-plugins-upstream sparse-checkout set \
-  pstack/skills/create-verification-skill pstack/skills/unslop
+  pstack/skills/create-verification-skill \
+  pstack/skills/maintain-verification-skill pstack/skills/unslop
 git -C /tmp/cursor-plugins-upstream log -1 --format='%H %s'
 ```
 
