@@ -19,7 +19,13 @@ repo. Sources we have not taken anything from do not belong in this file.
 | `sol-loop` | [t3dotgg/tstack](https://github.com/t3dotgg/tstack) | `skills/sol-loop` | MIT |
 | `unslop` | [cursor/plugins](https://github.com/cursor/plugins) | `pstack/skills/unslop` | MIT |
 
-`tstack-update` is maintained locally in this repo. It has no upstream entry.
+`tstack-update` and `gen-app-store-screenshots` are maintained locally in this
+repo and have no upstream entry. `gen-app-store-screenshots` adapts ideas from
+[adamlyttleapps/claude-skill-aso-appstore-screenshots](https://github.com/adamlyttleapps/claude-skill-aso-appstore-screenshots)
+(benefit discovery, capture assessment, key principles) and
+[ParthJadhav/app-store-screenshots](https://github.com/ParthJadhav/app-store-screenshots)
+(headline rules, narrative order, designed backgrounds), both MIT. It copies
+no files from either, so `tstack-update` does not sync it.
 
 ## Source repositories
 
@@ -67,10 +73,12 @@ Some skills reference others by name:
   optional maintenance loop.
 - `maintain-verification-skill` points at `create-verification-skill` when no
   verification skill exists yet.
+- `gen-app-store-screenshots` runs its own Sol review loop through T3's
+  `delegate_task`, modelled on `sol-loop` but not calling it.
 
 Currently vendored: `babysit-pr`, `council`, `create-verification-skill`,
 `full-send`, `full-stop`, `maintain-verification-skill`, `sol-loop`,
-`tstack-update`, `unslop`.
+`tstack-update`, `unslop`. Local only: `gen-app-store-screenshots`.
 Not yet vendored: `file-pr`, `leaving-pr-comments`, `modernize`, `takeover`.
 
 ## Adding a source
@@ -89,6 +97,12 @@ Their license texts live in:
 
 - `licenses/t3dotgg-tstack/LICENSE`
 - `licenses/cursor-plugins/LICENSE`
+
+`gen-app-store-screenshots` credits two more MIT projects whose ideas it
+adapts:
+
+- `licenses/adamlyttleapps-claude-skill-aso-appstore-screenshots/LICENSE`
+- `licenses/ParthJadhav-app-store-screenshots/LICENSE`
 
 Keep the upstream repository link in the provenance table when copying or
 modifying a skill. If another source requires its license text to travel with
