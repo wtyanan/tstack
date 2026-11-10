@@ -2,6 +2,7 @@
 //
 //   swift compose.swift <spec.json> [slug-or-raw ...]      compose all frames, or only the named ones
 //   swift compose.swift <spec.json> --sheet <out-dir>      write sheet.png (all frames) and thumbs.png (first three)
+//   swift compose.swift <spec.json> --check                validate raw and rendered upload lists for a one-size spec
 //
 // Paths in the spec are relative to the current directory. Layout is designed in a
 // 1320 x 2868 canvas and scaled uniformly to every size in `sizes`.
@@ -224,7 +225,8 @@ func compose(_ frame: Frame, theme: Theme, raw: CGImage, size: CGSize) -> CGImag
     // Breakout: the same pixels, enlarged and floating over the device.
     if let b = frame.breakout {
         let region = rect(b, "\(frame.slug).breakout")
-        guard let crop = raw.cropping(to: region) else { fail("\(frame.slug): breakout is outside the capture") }
+        guard CGRect(x: 0, y: 0, width: raw.width, height: raw.height).contains(region), !region.isEmpty,
+              let crop = raw.cropping(to: region) else { fail("\(frame.slug): breakout must lie inside the \(raw.width)x\(raw.height) capture") }
         let w = CGFloat(frame.breakoutWidth ?? 1220)
         let h = w * region.height / region.width
         let topY = frame.breakoutTop.map { height - CGFloat($0) } ?? (onScreen(region).midY + h / 2)
@@ -287,14 +289,61 @@ guard slugs.count == spec.frames.count else { fail("duplicate frame slugs") }
 if args.first == "--sheet" {
     guard args.count == 2 else { fail("usage: --sheet <dir>") }
     let images = spec.frames.map { loadImage("\(spec.out)/\(hero.key)/\($0.slug).png") }
-    writePNG(strip(images, cell: CGSize(width: 600, height: 1304), background: 1), to: "\(args[1])/sheet.png")
-    // App Store search results show the first three frames at roughly this size.
-    writePNG(strip(Array(images.prefix(3)), cell: CGSize(width: 170, height: 370), background: 0.78), to: "\(args[1])/thumbs.png")
+    guard let first = images.first else { fail("no frames for review sheet") }
+    let aspect = CGFloat(first.height) / CGFloat(first.width)
+    guard images.allSatisfy({ $0.width == first.width && $0.height == first.height }) else {
+        fail("review frames must have matching dimensions")
+    }
+    writePNG(strip(images, cell: CGSize(width: 600, height: ceil(600 * aspect)), background: 1), to: "\(args[1])/sheet.png")
+    // Preserve the display's aspect ratio, including Duo inner and outer displays.
+    writePNG(strip(Array(images.prefix(3)), cell: CGSize(width: 170, height: ceil(170 * aspect)), background: 0.78), to: "\(args[1])/thumbs.png")
     print("\(args[1])/sheet.png\n\(args[1])/thumbs.png")
     exit(0)
 }
 
+if args.first == "--check" {
+    guard args.count == 1 else { fail("usage: --check") }
+    var failures = 0
+    func problem(_ message: String) { failures += 1; print("FAIL \(message)") }
+    guard spec.sizes.count == 1, let (sizeKey, wh) = spec.sizes.first, wh.count == 2 else {
+        fail("--check needs exactly one [width, height] size per spec")
+    }
+    if !(1...10).contains(spec.frames.count) { problem("\(spec.frames.count) frames; App Store Connect takes 1-10 per slot") }
+    var rawNames: [String] = []
+    for frame in spec.frames where !rawNames.contains(frame.raw) { rawNames.append(frame.raw) }
+    let lists = [("raw", spec.raw, rawNames), ("rendered", "\(spec.out)/\(sizeKey)", spec.frames.map(\.slug))]
+    for (kind, dir, names) in lists {
+        let expected = Set(names.map { "\($0).png" })
+        let present = (try? FileManager.default.contentsOfDirectory(atPath: dir)) ?? []
+        for extra in present.filter({ !$0.hasPrefix(".") && !expected.contains($0) }).sorted() {
+            problem("\(dir)/\(extra): not in the \(kind) upload list; move it out of the folder")
+        }
+        for name in names {
+            let path = "\(dir)/\(name).png"
+            guard let source = CGImageSourceCreateWithURL(URL(fileURLWithPath: path) as CFURL, nil),
+                  CGImageSourceGetCount(source) == 1,
+                  let image = CGImageSourceCreateImageAtIndex(source, 0, nil) else { problem("\(path): missing or undecodable"); continue }
+            let props = CGImageSourceCopyPropertiesAtIndex(source, 0, nil) as? [CFString: Any] ?? [:]
+            var issues: [String] = []
+            if CGImageSourceGetType(source) as String? != UTType.png.identifier { issues.append("not PNG data") }
+            if image.width != wh[0] || image.height != wh[1] { issues.append("\(image.width)x\(image.height), expected \(wh[0])x\(wh[1])") }
+            let alpha = image.alphaInfo
+            if props[kCGImagePropertyHasAlpha] as? Bool == true || ![.none, .noneSkipLast, .noneSkipFirst].contains(alpha) {
+                issues.append("has an alpha channel")
+            }
+            if image.bitsPerComponent != 8 { issues.append("\(image.bitsPerComponent)-bit") }
+            if image.colorSpace?.model != .rgb { issues.append("not RGB") }
+            if issues.isEmpty { print("ok   \(kind) \(path) \(image.width)x\(image.height)") }
+            else { problem("\(path): \(issues.joined(separator: "; "))") }
+        }
+    }
+    print(failures == 0 ? "PASS \(specPath)" : "FAIL \(specPath): \(failures) problem(s)")
+    exit(failures == 0 ? 0 : 1)
+}
+
 let requested = Set(args)
+let unknown = requested.subtracting(slugs).subtracting(spec.frames.map(\.raw))
+guard unknown.isEmpty else { fail("no frame matches: \(unknown.sorted().joined(separator: ", "))") }
 for frame in spec.frames where requested.isEmpty || requested.contains(frame.slug) || requested.contains(frame.raw) {
     let raw = loadImage("\(spec.raw)/\(frame.raw).png")
     for (folder, wh) in spec.sizes.sorted(by: { $0.key > $1.key }) {
