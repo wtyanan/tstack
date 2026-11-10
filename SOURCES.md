@@ -74,7 +74,16 @@ Some skills reference others by name:
 - `maintain-verification-skill` points at `create-verification-skill` when no
   verification skill exists yet.
 - `gen-app-store-screenshots` runs its own Sol review loop through T3's
-  `delegate_task`, modelled on `sol-loop` but not calling it.
+  `delegate_task`, modelled on `sol-loop` but not calling it. Local composition
+  and localization references document the bundled renderer, shipped-locale
+  discovery, and per-locale capture/review workflow. An upload-requirements
+  reference covers regular and optional Duo inner/outer targets, separate
+  native raw/rendered artifacts, and a mandatory per-target validation gate.
+  The compositor adds a `--check` mode for that gate, rejects unmatched frame
+  filters and out-of-bounds breakouts, and its review sheets preserve each
+  display's aspect ratio. It needs macOS/Xcode and
+  simulator controls; image generation is optional, and an unavailable Sol
+  route is reported as blocked review.
 
 Currently vendored: `babysit-pr`, `council`, `create-verification-skill`,
 `full-send`, `full-stop`, `maintain-verification-skill`, `sol-loop`,

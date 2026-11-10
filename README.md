@@ -33,7 +33,7 @@ npx skills add wtyanan/tstack --list
 | `create-verification-skill` | Generates a project-local Claude skill that drives the app like a user and proves behavior. |
 | `full-send` | Takes a change to a merged PR with nobody watching. |
 | `full-stop` | Same as `full-send`, but stops when the PR is ready for me to merge. |
-| `gen-app-store-screenshots` | Builds an App Store screenshot set from the code alone: a Sol-reviewed plan, real captures plus GPT imagery, and a Sol review loop. |
+| `gen-app-store-screenshots` | Builds regular and optional iPhone Duo screenshot sets with separate raw/rendered PNGs, upload checks, Sol reviews, and supported app locales. |
 | `maintain-verification-skill` | Audits a project's verification skill against source and the live app, then ships proven fixes. |
 | `sol-loop` | Reviews a change with GPT Sol in a loop until both sides agree. |
 | `tstack-update` | Syncs the vendored skills from their upstream sources. |
@@ -52,7 +52,8 @@ adaptations** in [`SOURCES.md`](SOURCES.md). The main ones:
   [adamlyttleapps/claude-skill-aso-appstore-screenshots](https://github.com/adamlyttleapps/claude-skill-aso-appstore-screenshots)
   and [ParthJadhav/app-store-screenshots](https://github.com/ParthJadhav/app-store-screenshots)
   and replaces their AI-painted and web-editor output with real simulator
-  captures, a Swift compositor and a Sol review loop.
+  captures, a Swift compositor and a bounded Sol review loop. Composition and
+  all-locale capture guidance live in focused references.
 
 ## Dependencies
 
@@ -71,8 +72,10 @@ Not vendored here yet: `file-pr`, `leaving-pr-comments`, `modernize`, and
 their upstream repositories if a workflow needs them.
 
 `gen-app-store-screenshots` needs macOS with Xcode (its compositor is a Swift
-script), an iOS Simulator, and T3 Code for the device tools, the Sol reviews and GPT image
-generation.
+script), an iOS Simulator, simulator-control tools, and a Sol delegation route.
+It includes T3 Code device/review instructions. Image generation is optional
+when existing seed assets suffice; unavailable capabilities are reported as
+blocked stages.
 
 `babysit-pr` also ships a `pr-wait` helper that needs `python3`, and the
 PR-focused skills expect an authenticated [GitHub CLI](https://cli.github.com)
