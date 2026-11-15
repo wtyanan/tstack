@@ -74,9 +74,8 @@ their upstream repositories if a workflow needs them.
 
 `gen-app-store-creatives` needs macOS with Xcode (its renderers are Swift
 scripts), an iOS Simulator, simulator-control tools, and a route to each
-reviewer model the user picks. It names no default model: it asks which
-reviewers and image-generation route to use, offering the frontier models it
-finds in T3 Code. Image generation is optional when existing seed assets
+reviewer model the user picks. It names no default model: it asks the user
+to name the reviewer models and to pick an image-generation route. Image generation is optional when existing seed assets
 suffice; unavailable capabilities are reported as blocked stages.
 
 `babysit-pr` also ships a `pr-wait` helper that needs `python3`, and the
