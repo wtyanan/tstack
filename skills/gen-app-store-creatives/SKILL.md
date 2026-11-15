@@ -50,32 +50,30 @@ for every answer; silence is not a selection. Record the answers under
    screenshots, iPhone Duo screenshots, header video, search results video.
 2. **Locales** (single choice), only when screenshots or the search results
    video are selected: English only, or all supported app locales.
-3. **Council reviewers**: which models review the plan, visuals,
-   translations and videos. One model or several.
+3. **Council reviewers** (typed, never multiple choice): ask the user to
+   name the models that review the plan, visuals, translations and videos.
+   One model or several.
 4. **Image generation**: which route makes portraits, photos and textures,
    or none (reuse existing assets only).
 
-How to ask questions 3 and 4:
+How to ask:
 
-- **In T3 Code:** call `orchestrator_capabilities` first. For each provider,
-  find its frontier models, the newest top tier (for example Claude Opus or
-  Fable, GPT Sol, Muse Wonder, Astra; read the list rather than assuming
-  these). Offer them as a multiple-choice council question, at most one or
-  two per provider. If more fit than the question allows, offer the newest
-  flagship per provider. Add an explicit option labelled "Other" to both
-  questions 3 and 4, described as "Type a model name", and tell the user to
-  type it under "Other". Don't rely on the prompt adding one itself. If the
-  user picks "Other" without typing a name, ask for it right after the
-  prompt. For images, offer the image-capable routes you found (an image
-  tool in this session, or a provider whose models generate images), plus
-  "Other" and "None". Ask all four questions in one question prompt.
-- **Elsewhere:** ask questions 3 and 4 as typed input, in the same message as
-  the multiple-choice questions. Accept model names as the user writes them,
-  "none" for no council (self-review only, labelled as such), and "none" for
-  no image generation.
+- **Question 3 is always free text.** Don't list or suggest models. Ask the
+  user to name them, accept the names as written, and accept "none" for no
+  council (self-review only, labelled as such).
+- **In T3 Code:** call `orchestrator_capabilities` first. Ask questions 1, 2
+  and 4 in one question prompt. For question 4, offer the image-capable
+  routes you found (an image tool in this session, or a provider whose
+  models generate images), plus an explicit "Other" option described as
+  "Type a model name" and "None". Then ask question 3 as a plain-text
+  message and wait for the reply. Match each named model against the
+  capabilities list.
+- **Elsewhere:** ask all four in one message, with questions 3 and 4 as
+  typed input. Accept "none" for no image generation.
 
-The skill names no default reviewer or image model. If a chosen route turns
-out to be unavailable, say so and ask again; never substitute silently.
+The skill names no default reviewer or image model. If a named model or
+chosen route is unavailable or ambiguous, say so and ask again; never
+substitute silently.
 
 Selection rules:
 
