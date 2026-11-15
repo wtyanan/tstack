@@ -62,10 +62,13 @@ How to ask questions 3 and 4:
   Fable, GPT Sol, Muse Wonder, Astra; read the list rather than assuming
   these). Offer them as a multiple-choice council question, at most one or
   two per provider. If more fit than the question allows, offer the newest
-  flagship per provider; the user can type another. For images, offer the
-  image-capable routes you found (an image tool in this session, or a
-  provider whose models generate images) plus "None". Ask all four questions
-  in one question prompt.
+  flagship per provider. Add an explicit option labelled "Other" to both
+  questions 3 and 4, described as "Type a model name", and tell the user to
+  type it under "Other". Don't rely on the prompt adding one itself. If the
+  user picks "Other" without typing a name, ask for it right after the
+  prompt. For images, offer the image-capable routes you found (an image
+  tool in this session, or a provider whose models generate images), plus
+  "Other" and "None". Ask all four questions in one question prompt.
 - **Elsewhere:** ask questions 3 and 4 as typed input, in the same message as
   the multiple-choice questions. Accept model names as the user writes them,
   "none" for no council (self-review only, labelled as such), and "none" for
