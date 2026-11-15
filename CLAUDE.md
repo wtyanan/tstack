@@ -16,7 +16,7 @@ suite. The deliverables are the `SKILL.md` files under `skills/`.
 ## Rules
 
 - **Vendored skills.** Every skill except `tstack-update` and
-  `gen-app-store-screenshots` comes from an upstream listed in `SOURCES.md`. To sync them, use the `tstack-update`
+  `gen-app-store-creatives` comes from an upstream listed in `SOURCES.md`. To sync them, use the `tstack-update`
   skill. Never bulk-copy upstream directories over local ones.
 - **Keep local adaptations.** Anything recorded under **Local adaptations** in
   `SOURCES.md` is intentional. Don't revert it to match upstream.

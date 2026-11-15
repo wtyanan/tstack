@@ -71,7 +71,7 @@ artifacts and resolve the upload choice; never overwrite one with another.
 
 ## Review and finish
 
-Use the main skill's Sol route/brief for translation accuracy, natural copy,
+Use the main skill's council route and brief for translation accuracy, natural copy,
 terminology, RTL/shaping, and layout. Include English/localized specs, app
 translations, sheets/thumbnails, and full frames as needed. Don't repeat
 English conversion scores.
