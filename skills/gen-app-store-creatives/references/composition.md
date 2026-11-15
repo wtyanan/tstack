@@ -58,6 +58,8 @@ Raw rectangles use the capture's actual pixels, also from the top-left.
 | --- | --- |
 | `theme.headlineFont` | `serif`, `sans`, `rounded`, or an installed PostScript font name. |
 | `theme.headlineSize` | Headline size on the design canvas; default 128. |
+| `theme.subheadFont` | `sans` (default) or `rounded`, for subheads and footnotes. |
+| `theme.fonts` | Font file paths registered for this process only, so a bundled app font can be named in `headlineFont`. |
 | `theme.light`, `theme.dark` | When supplied, each requires `canvas`, `ink`, and `secondary` hex colours. |
 | `background` | Frame canvas hex colour; text colours switch by luminance. Inspect actual contrast. |
 | `dark` | Selects dark theme/bezel; pair with a real dark-mode capture. |
@@ -68,7 +70,7 @@ Raw rectangles use the capture's actual pixels, also from the top-left.
 | `deviceWidth`, `deviceTop` | Canvas geometry. Default width 1092 bleeds below the canvas; around 960 can show the whole screen depending on text/capture ratio. Top is constrained below captions. |
 
 The renderer outputs opaque, 8-bit sRGB PNGs. It draws a bezel and uses one
-headline font per spec, system fonts for subheads/footnotes, centred text,
+headline font per spec, SF or SF Rounded for subheads/footnotes, centred text,
 and fixed caption widths. It does not generate decorative backgrounds,
 translate text, or detect overflow. For other layouts or typography controls,
 extend the compositor deliberately rather than inventing unsupported fields.

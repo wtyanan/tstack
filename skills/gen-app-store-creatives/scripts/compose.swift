@@ -36,15 +36,21 @@ struct Theme: Decodable {
     /// "serif" (New York), "sans" (SF), "rounded", or a PostScript font name.
     var headlineFont = "serif"
     var headlineSize: Double = 128
+    /// "sans" (SF) or "rounded" (SF Rounded), for the subhead and footnote.
+    var subheadFont = "sans"
+    /// Font files registered for this process only, so a bundled app font can be named in headlineFont.
+    var fonts: [String] = []
     var light = Colors(canvas: "#F4F5F3", ink: "#17181A", secondary: "#5C5E62")
     var dark = Colors(canvas: "#0E0E0D", ink: "#F4F4F1", secondary: "#A5A6A2")
 
-    enum CodingKeys: String, CodingKey { case headlineFont, headlineSize, light, dark }
+    enum CodingKeys: String, CodingKey { case headlineFont, headlineSize, subheadFont, fonts, light, dark }
     init() {}
     init(from d: Decoder) throws {
         let c = try d.container(keyedBy: CodingKeys.self)
         headlineFont = try c.decodeIfPresent(String.self, forKey: .headlineFont) ?? headlineFont
         headlineSize = try c.decodeIfPresent(Double.self, forKey: .headlineSize) ?? headlineSize
+        subheadFont = try c.decodeIfPresent(String.self, forKey: .subheadFont) ?? subheadFont
+        fonts = try c.decodeIfPresent([String].self, forKey: .fonts) ?? fonts
         light = try c.decodeIfPresent(Colors.self, forKey: .light) ?? light
         dark = try c.decodeIfPresent(Colors.self, forKey: .dark) ?? dark
     }
@@ -115,6 +121,15 @@ func headlineFont(_ name: String, _ size: CGFloat) -> NSFont {
     }
 }
 
+func bodyFont(_ name: String, _ size: CGFloat, _ weight: NSFont.Weight = .regular) -> NSFont {
+    let base = NSFont.systemFont(ofSize: size, weight: weight)
+    switch name {
+    case "sans": return base
+    case "rounded": return NSFont(descriptor: base.fontDescriptor.withDesign(.rounded) ?? base.fontDescriptor, size: size) ?? base
+    default: fail("subheadFont must be sans or rounded, not \(name)")
+    }
+}
+
 func attributed(_ text: String, font: NSFont, color: CGColor, lineHeight: CGFloat, kern: CGFloat = 0) -> NSAttributedString {
     let paragraph = NSMutableParagraphStyle()
     paragraph.alignment = .center
@@ -177,11 +192,11 @@ func compose(_ frame: Frame, theme: Theme, raw: CGImage, size: CGSize) -> CGImag
     top += draw(attributed(frame.headline, font: headlineFont(theme.headlineFont, hs), color: ink, lineHeight: hs * 1.08, kern: -1.4),
                 in: context, top: top, canvasHeight: height)
     top += 34
-    top += draw(attributed(frame.subhead, font: NSFont.systemFont(ofSize: 56), color: secondary, lineHeight: 70),
+    top += draw(attributed(frame.subhead, font: bodyFont(theme.subheadFont, 56), color: secondary, lineHeight: 70),
                 in: context, top: top, canvasHeight: height)
     if let footnote = frame.footnote {
         top += 22
-        top += draw(attributed(footnote, font: NSFont.systemFont(ofSize: 40, weight: .medium), color: secondary, lineHeight: 50),
+        top += draw(attributed(footnote, font: bodyFont(theme.subheadFont, 40, .medium), color: secondary, lineHeight: 50),
                     in: context, top: top, canvasHeight: height)
     }
 
@@ -282,6 +297,12 @@ let specPath = args.removeFirst()
 let spec: Spec
 do { spec = try JSONDecoder().decode(Spec.self, from: Data(contentsOf: URL(fileURLWithPath: specPath))) }
 catch { fail("\(specPath): \(error)") }
+for path in spec.theme.fonts {
+    var error: Unmanaged<CFError>?
+    if !CTFontManagerRegisterFontsForURL(URL(fileURLWithPath: path) as CFURL, .process, &error) {
+        fail("cannot register font \(path)")
+    }
+}
 guard let hero = spec.sizes.max(by: { $0.value[0] < $1.value[0] }) else { fail("no sizes") }
 let slugs = Set(spec.frames.map(\.slug))
 guard slugs.count == spec.frames.count else { fail("duplicate frame slugs") }

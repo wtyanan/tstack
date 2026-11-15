@@ -33,7 +33,7 @@ npx skills add wtyanan/tstack --list
 | `create-verification-skill` | Generates a project-local Claude skill that drives the app like a user and proves behavior. |
 | `full-send` | Takes a change to a merged PR with nobody watching. |
 | `full-stop` | Same as `full-send`, but stops when the PR is ready for me to merge. |
-| `gen-app-store-screenshots` | Builds regular and optional iPhone Duo screenshot sets with separate raw/rendered PNGs, upload checks, Sol reviews, and supported app locales. |
+| `gen-app-store-creatives` | Builds the App Store creatives you pick (regular and iPhone Duo screenshots, a header video, a search results video) from real captures, with upload checks, reviews by a council of models you choose, and supported app locales. |
 | `maintain-verification-skill` | Audits a project's verification skill against source and the live app, then ships proven fixes. |
 | `sol-loop` | Reviews a change with GPT Sol in a loop until both sides agree. |
 | `tstack-update` | Syncs the vendored skills from their upstream sources. |
@@ -48,12 +48,13 @@ adaptations** in [`SOURCES.md`](SOURCES.md). The main ones:
   Code's `.claude/skills/` layout instead of Cursor's.
 - `unslop` is provider-neutral and uses standard skill frontmatter.
 - `tstack-update` is maintained here rather than vendored.
-- `gen-app-store-screenshots` is written here. It adapts ideas from
+- `gen-app-store-creatives` is written here. It adapts ideas from
   [adamlyttleapps/claude-skill-aso-appstore-screenshots](https://github.com/adamlyttleapps/claude-skill-aso-appstore-screenshots)
   and [ParthJadhav/app-store-screenshots](https://github.com/ParthJadhav/app-store-screenshots)
   and replaces their AI-painted and web-editor output with real simulator
-  captures, a Swift compositor and a bounded Sol review loop. Composition and
-  all-locale capture guidance live in focused references.
+  captures, Swift renderers and a bounded review loop by a council of models the
+  user picks. Composition, all-locale capture, header and search results video
+  guidance live in focused references.
 
 ## Dependencies
 
@@ -71,11 +72,12 @@ Not vendored here yet: `file-pr`, `leaving-pr-comments`, `modernize`, and
 `takeover`. Install those from
 their upstream repositories if a workflow needs them.
 
-`gen-app-store-screenshots` needs macOS with Xcode (its compositor is a Swift
-script), an iOS Simulator, simulator-control tools, and a Sol delegation route.
-It includes T3 Code device/review instructions. Image generation is optional
-when existing seed assets suffice; unavailable capabilities are reported as
-blocked stages.
+`gen-app-store-creatives` needs macOS with Xcode (its renderers are Swift
+scripts), an iOS Simulator, simulator-control tools, and a route to each
+reviewer model the user picks. It names no default model: it asks which
+reviewers and image-generation route to use, offering the frontier models it
+finds in T3 Code. Image generation is optional when existing seed assets
+suffice; unavailable capabilities are reported as blocked stages.
 
 `babysit-pr` also ships a `pr-wait` helper that needs `python3`, and the
 PR-focused skills expect an authenticated [GitHub CLI](https://cli.github.com)

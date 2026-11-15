@@ -19,8 +19,8 @@ repo. Sources we have not taken anything from do not belong in this file.
 | `sol-loop` | [t3dotgg/tstack](https://github.com/t3dotgg/tstack) | `skills/sol-loop` | MIT |
 | `unslop` | [cursor/plugins](https://github.com/cursor/plugins) | `pstack/skills/unslop` | MIT |
 
-`tstack-update` and `gen-app-store-screenshots` are maintained locally in this
-repo and have no upstream entry. `gen-app-store-screenshots` adapts ideas from
+`tstack-update` and `gen-app-store-creatives` are maintained locally in this
+repo and have no upstream entry. `gen-app-store-creatives` adapts ideas from
 [adamlyttleapps/claude-skill-aso-appstore-screenshots](https://github.com/adamlyttleapps/claude-skill-aso-appstore-screenshots)
 (benefit discovery, capture assessment, key principles) and
 [ParthJadhav/app-store-screenshots](https://github.com/ParthJadhav/app-store-screenshots)
@@ -73,8 +73,11 @@ Some skills reference others by name:
   optional maintenance loop.
 - `maintain-verification-skill` points at `create-verification-skill` when no
   verification skill exists yet.
-- `gen-app-store-screenshots` runs its own Sol review loop through T3's
-  `delegate_task`, modelled on `sol-loop` but not calling it. Local composition
+- `gen-app-store-creatives` (formerly `gen-app-store-screenshots`) asks what
+  to make and which council models and image route to use, then runs its own
+  council review loop through T3's `delegate_task` (or the harness's route),
+  modelled on `sol-loop` and `council` but calling neither. Header and search
+  results video references and renderers sit beside the screenshot ones. Local composition
   and localization references document the bundled renderer, shipped-locale
   discovery, and per-locale capture/review workflow. An upload-requirements
   reference covers regular and optional Duo inner/outer targets, separate
@@ -82,12 +85,12 @@ Some skills reference others by name:
   The compositor adds a `--check` mode for that gate, rejects unmatched frame
   filters and out-of-bounds breakouts, and its review sheets preserve each
   display's aspect ratio. It needs macOS/Xcode and
-  simulator controls; image generation is optional, and an unavailable Sol
-  route is reported as blocked review.
+  simulator controls; image generation is optional, and an unavailable
+  reviewer is reported as blocked review.
 
 Currently vendored: `babysit-pr`, `council`, `create-verification-skill`,
 `full-send`, `full-stop`, `maintain-verification-skill`, `sol-loop`,
-`tstack-update`, `unslop`. Local only: `gen-app-store-screenshots`.
+`tstack-update`, `unslop`. Local only: `gen-app-store-creatives`.
 Not yet vendored: `file-pr`, `leaving-pr-comments`, `modernize`, `takeover`.
 
 ## Adding a source
@@ -107,7 +110,7 @@ Their license texts live in:
 - `licenses/t3dotgg-tstack/LICENSE`
 - `licenses/cursor-plugins/LICENSE`
 
-`gen-app-store-screenshots` credits two more MIT projects whose ideas it
+`gen-app-store-creatives` credits two more MIT projects whose ideas it
 adapts:
 
 - `licenses/adamlyttleapps-claude-skill-aso-appstore-screenshots/LICENSE`
